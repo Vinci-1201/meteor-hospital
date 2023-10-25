@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <style>
+        .title {
+            font-size: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .info-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .info-section {
+            text-align: center;
+            margin: 20px;
+            max-width: 300px;
+        }
+
+        .info-section img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .image-title {
+            color: #0fa3a8;
+            font-weight: bold;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .info-section p {
+            padding: 10px;
+        }
+
+        .submit-div {
+            display: flex;
+            margin: 10px auto;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .submit-div .donate-button {
+            margin-bottom: 55px;
+            width: 35%;
+            padding: 15px 35px;
+            border-radius: 10px;
+            border: #0fa3a8;
+            background-color: #0fa3a8;
+            color: white;
+            font-weight: 700;
+            font-size: 25px;
+        }
+
+        .submit-div .donate-button:hover {
+            background-color: #0D7376;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        function donationEnquiry() {
+          window.location.href = "payment.html";
+        }
+    </script>
+</head>
+<body>
+
+<div class="title">
+    <h1>WHY DONATE?</h1>
+    <p>Ways on how your donations can make an impact.</p>
+</div>
+
+<div class="info-container">
+    <div class="info-section">
+        <img src="healing.jpg" alt="HEALING">
+        <p class="image-title"> HEALING LIVES </p>
+        <p>Providing critical medical services, advanced treatments, and compassionate care to patients from all walks of life.</p>
+    </div>
+
+    <div class="info-section">
+        <img src="difference.jpg" alt="DIFFERENCE ">
+        <p class="image-title"> MAKE A DIFFERENCE </p>
+        <p>Your donation isn't just a financial contribution; it's a lifeline for patients and their families.</p>
+    </div>
+
+    <div class="info-section">
+        <img src="medicine.jpg" alt="MEDICINE">
+        <p class="image-title"> ADVANCING MEDICINE </p>
+        <p>To discover groundbreaking treatments, pioneer new surgical techniques, and enhance our ability to combat diseases and conditions that affect millions worldwide.</p>
+    </div>
+</div>
+
+<div class="submit-div">
+    <button type="button" class="donate-button" onclick="donationEnquiry()">Donate Here </button>
+</div>
+
+</body>
+</html>
