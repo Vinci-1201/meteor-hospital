@@ -20,7 +20,7 @@
             align-items: center;
             min-height: 100vh;
         }
-        
+
         .details-card, .payment-card {
             width: 400px; 
             height: 500px;
@@ -48,8 +48,11 @@
             color: white;
             border: none;
             border-radius: 5px;
-            padding: 5px 10px;
+            padding: 10px;
             cursor: pointer;
+            width: 130px;
+            height: 40px;
+            margin: 5px;
         }
 
         .donation-button:hover {
@@ -93,9 +96,12 @@
         color: white;
         border: none;
         border-radius: 5px;
-        padding: 10px 20px;
+        padding: 20px;
+        width: 200px;
         cursor: pointer;
-        margin-top: 10px;
+        margin-top: 100px;
+        font-weight: 700;
+        font-size: large;
     }
        
     </style>
@@ -103,7 +109,7 @@
 <body>
 
 <div class="container">
-    <div class="card">
+    <div class="details-card">
         <h3>Your Details</h3>
         <form>
             <div class="form-group">
@@ -132,7 +138,7 @@
             </div>
         </form>
     </div>
-    <div class="card">
+    <div class="payment-card">
         <h3>Payment Method</h3>
         <div class="payment-buttons">
             <button class="payment-button">Bank Transfer</button>
