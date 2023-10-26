@@ -1,12 +1,13 @@
 CREATE DATABASE meteor_hospital;
 
 CREATE TABLE patients( 
-patientIC VARCHAR(12) PRIMARY KEY, 
-patientName VARCHAR(60), 
-patientPSWD VARCHAR(30), 
-patientDOB DATE, 
-gender CHAR(2), 
-patientAdd VARCHAR(100) 
+    patientIC VARCHAR(12) PRIMARY KEY, 
+    patientName VARCHAR(60), 
+    patientPSWD VARCHAR(30), 
+    patientDOB DATE, 
+    gender CHAR(2), 
+    patientAdd VARCHAR(100),
+    patientContact VARCHAR(12) 
 );
 
 CREATE TABLE doctors(
@@ -17,6 +18,7 @@ CREATE TABLE doctors(
     qualifications VARCHAR(255),
     designation VARCHAR(255), 
     officeNum VARCHAR(12),
+    workDay VARCHAR(30),
     officeHour VARCHAR(30)
 );
 
@@ -25,3 +27,159 @@ CREATE TABLE specialties(
     specialtyName VARCHAR(30),
     location VARCHAR(100)
 );
+
+CREATE TABLE admins(
+    adminID VARCHAR(20) PRIMARY KEY,
+    adminName VARCHAR(60),
+    adminPSWD VARCHAR(30),
+    role VARCHAR(10)
+);
+
+CREATE TABLE appointments(
+    appointmentID VARCHAR(20) PRIMARY KEY NOT NULL,
+    patientIC VARCHAR(12) NOT NULL,
+    doctorID VARCHAR(20),
+    appointmentDate DATE,
+    appointmentTime TIME,
+    appointmentType VARCHAR(30) NOT NULL,
+    issue VARCHAR(500) NOT NULL,
+    preferredPaymentType VARCHAR(30) NOT NULL,
+    medicalReportFile VARCHAR(50),
+    screeningType VARCHAR(60),
+    preferredPlatform VARCHAR(100),
+    appointmentStatus VARCHAR(30),
+    adminID VARCHAR(20),
+    
+    CONSTRAINT FK_APPOINTMENT_PATIENT FOREIGN         		KEY(patientIC)REFERENCES patients(patientIC),
+    
+    CONSTRAINT FK_APPOINTMENT_DOCTOR FOREIGN KEY(doctorID)
+    REFERENCES doctors(doctorID),
+    
+    CONSTRAINT FK_APPOINTMENT_ADMIN FOREIGN KEY(adminID)
+    REFERENCES admins(adminID),
+    
+    CONSTRAINT consultation_CK CHECK (appointmentType = 'CONSULTATION' AND doctorID IS NOT NULL),
+    
+    CONSTRAINT healthScreening_CK CHECK(appointmentType = 'HEALTH-SCREENING' AND doctorID IS NULL AND screeningType IS NOT NULL),
+    
+    CONSTRAINT telemedicine_CK CHECK(appointmentType = 'TELEMEDICINE' AND doctorID IS NOT NULL AND prefferedPlatform IS NOT NULL)
+);
+
+
+
+
+CREATE TABLE telemedicine(
+    telemedicineID VARCHAR(20),
+    appointmentID VARCHAR(20),
+    platformLink VARCHAR(500),
+    fee DECIMAL(5,2),
+    
+    PRIMARY KEY (telemedicineID, appointmentID),
+    
+    CONSTRAINT FK_TELEMEDICINE_APPOINTMENT FOREIGN KEY(appointmentID)
+    REFERENCES appointments(appointmentID)
+);
+
+
+
+
+
+CREATE TABLE payments(
+    paymentID VARCHAR(20) NOT NULL PRIMARY KEY,
+    telemedicineID VARCHAR(20),
+    amount DECIMAL(10,2),
+    paymentDate DATE NOT NULL,
+    paymentType VARCHAR(30) NOT NULL,
+    remarks VARCHAR(100),
+    
+    CONSTRAINT FK_MEDICINE_APPOINTMENT FOREIGN KEY(appointmentID)
+    REFERENCES appointments(appointmentID),
+    
+    CONSTRAINT FK_MEDICINE_TELEMEDICINE FOREIGN KEY(telemedicineID)
+    REFERENCES telemedicine(telemedicineID)
+);
+
+
+
+
+CREATE TABLE shippings(
+    shippingID VARCHAR(20) NOT NULL PRIMARY KEY,
+    telemedicineID VARCHAR(20) NOT NULL,
+    remarks VARCHAR(255),
+    shippingDate DATE,
+    paymentID VARCHAR(20),
+    
+    CONSTRAINT FK_SHIPPING_TELEMEDICINE FOREIGN KEY(telemedicineID)
+    REFERENCES telemedicine(telemedicineID),
+    
+    CONSTRAINT FK_SHIPPING_PAYMENT FOREIGN KEY(paymentID)
+    REFERENCES payments(paymentID)
+);
+
+
+CREATE TABLE donations(
+    donationID VARCHAR(20) NOT NULL PRIMARY KEY,
+    patientIC VARCHAR(12),
+    amount DECIMAL(10,2),
+    paymentType VARCHAR(30),  
+    
+    CONSTRAINT FK_DONATION_PATIENT FOREIGN KEY(patientIC)
+    REFERENCES patients(patientIC)
+);
+
+
+
+
+
+
+
+CREATE TABLE shipping_medicine(
+    shippingID VARCHAR(20) NOT NULL,
+    medicineID VARCHAR(20) NOT NULL,
+    
+    PRIMARY KEY(shippingID, medicineID),
+    
+    CONSTRAINT FK_SHIPPING_SHIPPING FOREIGN KEY(shippingID)
+    REFERENCES shippings(shippingID),
+    
+    CONSTRAINT FK_SHIPPING_MEDICINE FOREIGN KEY(medicineID)
+    REFERENCES medicine(medicineID)
+);
+
+
+
+CREATE TABLE medicine(
+    medicineID VARCHAR(20) NOT NULL PRIMARY KEY,
+    medicineName VARCHAR(60) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    packagingType VARCHAR(30) NOT NULL,
+    supplierID VARCHAR(20) NOT NULL,
+    expirationDate DATE NOT NULL,
+    description VARCHAR(255),
+    
+    CONSTRAINT FK_MEDICINE_SUPPLIER FOREIGN KEY(supplierID)
+    REFERENCES suppliers(supplierID)
+);
+
+
+
+
+
+CREATE TABLE suppliers(
+    supplierID VARCHAR(20) NOT NULL PRIMARY KEY,
+    supplierName VARCHAR(60) NOT NULL,
+    supplierContact VARCHAR(12) NOT NULL
+);
+
+
+
+
+
+INSERT INTO admins
+VALUES ('A01', 'Vinci', 'abc', 'ADMIN')
+INSERT INTO admins
+VALUES ('A02', 'Rayhan', 'abc', 'ADMIN');
+INSERT INTO admins
+VALUES ('A03', 'Victoria', 'abc', 'ADMIN');
+INSERT INTO admins
+VALUES ('A04', 'Jocelyn', 'abc', 'ADMIN');
