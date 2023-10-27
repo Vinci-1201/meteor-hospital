@@ -3,7 +3,7 @@ CREATE DATABASE meteor_hospital;
 CREATE TABLE patients( 
     patientIC VARCHAR(12) PRIMARY KEY, 
     patientName VARCHAR(60), 
-    patientPSWD VARCHAR(30), 
+    password VARCHAR(30), 
     patientDOB DATE, 
     gender CHAR(2), 
     patientAdd VARCHAR(100),
@@ -13,7 +13,6 @@ CREATE TABLE patients(
 CREATE TABLE doctors(
     doctorID VARCHAR(20) PRIMARY KEY,
     doctorName VARCHAR(60),
-    doctorPSWD VARCHAR(30),
     specialtyID VARCHAR(20),
     qualifications VARCHAR(255),
     designation VARCHAR(255), 
@@ -31,7 +30,7 @@ CREATE TABLE specialties(
 CREATE TABLE admins(
     adminID VARCHAR(20) PRIMARY KEY,
     adminName VARCHAR(60),
-    adminPSWD VARCHAR(30),
+    password VARCHAR(30),
     role VARCHAR(10)
 );
 
@@ -183,3 +182,6 @@ INSERT INTO admins
 VALUES ('A03', 'Victoria', 'abc', 'ADMIN');
 INSERT INTO admins
 VALUES ('A04', 'Jocelyn', 'abc', 'ADMIN');
+
+
+
