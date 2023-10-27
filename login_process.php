@@ -1,62 +1,59 @@
-<?PHP
-session_start();
+<?php 
+session_start(); 
+include "connection.php";
 
-if(empty($_POST['patientIC']) or empty($_POST['password']) or empty($_POST['role'])){
-    die('<script>alert("Please enter the correct ID and password.");
-    window.location.href="login.html"</script>');
+if (isset($_POST['ICID']) && isset($_POST['password']) && isset($_POST['type'])) {
+    function validate($data){
+       $data = trim($data);
+       $data = stripslashes($data);
+       $data = htmlspecialchars($data);
+       return $data;
+    }
+
+    $ICID = validate($_POST['ICID']);
+    $pass = validate($_POST['password']);
+    $type = validate($_POST['type']);
+
+    if (empty($ICID)) {
+        header("Location: index.php?error=User Name is required");
+        exit();
+    } else if(empty($pass)){
+        header("Location: index.php?error=Password is required");
+        exit();
+    } else {
+        if($type == 'admin'){
+            $sql = "SELECT * FROM admins WHERE adminIC='$ICID' AND password='$pass'";
+        } else {
+            $sql = "SELECT * FROM patients WHERE patientIC='$ICID' AND password='$pass'";
+        }
+
+        $result = mysqli_query($condb, $sql);
+
+        if(mysqli_num_rows($result) === 1) {
+            $row = mysqli_fetch_assoc($result);
+            if($type == 'admin' && $row['adminIC'] === $ICID && $row['password'] === $pass) {
+                $_SESSION['adminIC'] = $row['adminIC'];
+                $_SESSION['name'] = $row['name'];
+                $_SESSION['id'] = $row['id'];
+                header("Location: ../admin/index_admin.php");
+                exit();
+            } else if($type == 'patient' && $row['patientIC'] === $ICID && $row['password'] === $pass) {
+                $_SESSION['patientIC'] = $row['patientIC'];
+                $_SESSION['name'] = $row['name'];
+                $_SESSION['id'] = $row['id'];
+                header("Location: ../patient/index_patient.php");
+                exit();
+            } else {
+                header("Location: index.php?error=Incorrect User IC/ID or password");
+                exit();
+            }
+        } else {
+            header("Location: index.php?error=Incorrect User IC/ID or password");
+            exit();
+        }
+    }
+} else {
+    header("Location: index.php");
+    exit();
 }
-
-if($_POST['type']='patient')
-{
-    $table    =   "patients";
-    $col1     =   "patientIC";
-    $col2     =   "password";
-    $col3     =   "patientName";
-    $location =   "patient/index.php";
-}
-
-else if($_POST['doctor']=='doctor')
-{
-    $table    =   "doctors";
-    $col1     =   "doctorID";
-    $col2     =   "password";
-    $col3     =   "doctorName";
-    $location =   "doctor/index.php";
-}
-
-else if($_POST['admin']=='admin')
-{
-    $table    =   "admins";
-    $col1     =   "adminID";
-    $col2     =   "password";
-    $col3     =   "adminName";
-    $location =   "admin/index.php";
-}
-
-include("connection.php");
-
-$ICID = mysqli_real_escape_string($conn, $_POST["ICID"]);
-$password = mysqli_real_escape_string($conn, $_POST["password"]);
-
-$login = "SELECT * 
-FROM $table 
-WHERE
-       $col1 = '$ICID'
-AND    $col2 = '$password'
-limit 1";
-
-$run_login = mysqli_query($conn, $login);
-
-if(mysqli_num_rows($run_login)==1){
-    $data = mysqli_fetch_array($run_login);
-    $_SESSION[$col3] = $data[$col3];
-    $_SESSION[$col1] = $data[$col1];
-    echo"<script>window.location.href='$location'</script>";
-}
-else{
-    echo "<script>alert('Failed to Login.');
-    window.histpry.back();</script>";
-}
-
-mysql_close($conn);
 ?>

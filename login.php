@@ -12,15 +12,12 @@ include("header.php");
     
     <input type='radio'       name='type' 	value='patient' checked>
     <label><b>Patient</b></label>
-    
-    <input type='radio'       name='type' 	value='doctor'>
-    <label><b>Doctor</b></label>
 
     <input type='radio'       name='type' 	value='admin'>
     <label><b>Admin</b></label>
     
     <br>
-    <input	type='submit'    value='Login'>
+    <input	type='submit'    value='Login'><br>
     <a href='signup.php'>Become a Member of Us</a>
 </form> 
 
