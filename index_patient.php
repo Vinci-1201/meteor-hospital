@@ -1,14 +1,8 @@
 <?php
-include('navigation.php'); // Include the navigation bar
-include('floating-menu.php'); // Include the floating menu
 include('header.php');
+include('navigation-login.php');
+include('floating-menu.php'); 
 ?>
-
-<!-- <style>
-    .logo-img-index {
-        margin: 0 20px; /* Adjust this value to control the horizontal spacing */
-    }
-</style> -->
 
 <body>
     <div class="banner-index">

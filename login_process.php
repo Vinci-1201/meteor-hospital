@@ -1,59 +1,82 @@
-<?php 
-session_start(); 
-include "connection.php";
+<?php
+include("connection.php");
+session_start();
 
-if (isset($_POST['ICID']) && isset($_POST['password']) && isset($_POST['type'])) {
-    function validate($data){
-       $data = trim($data);
-       $data = stripslashes($data);
-       $data = htmlspecialchars($data);
-       return $data;
-    }
+// Check the method used
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $ICID = validate($_POST['ICID']);
-    $pass = validate($_POST['password']);
-    $type = validate($_POST['type']);
+    // Check whether the variable isset
+    if (isset($_POST['IC_ID']) && isset($_POST['password']) && isset($_POST['role'])) {
 
-    if (empty($ICID)) {
-        header("Location: index.php?error=User Name is required");
-        exit();
-    } else if(empty($pass)){
-        header("Location: index.php?error=Password is required");
-        exit();
-    } else {
-        if($type == 'admin'){
-            $sql = "SELECT * FROM admins WHERE adminIC='$ICID' AND password='$pass'";
-        } else {
-            $sql = "SELECT * FROM patients WHERE patientIC='$ICID' AND password='$pass'";
+        // Retrieve data from form and validate them
+        function validate($data)
+        {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
         }
 
-        $result = mysqli_query($condb, $sql);
+        $ICID = validate($_POST['IC_ID']);
+        $pass = validate($_POST['password']);
+        $type = validate($_POST['role']);
 
-        if(mysqli_num_rows($result) === 1) {
-            $row = mysqli_fetch_assoc($result);
-            if($type == 'admin' && $row['adminIC'] === $ICID && $row['password'] === $pass) {
-                $_SESSION['adminIC'] = $row['adminIC'];
-                $_SESSION['name'] = $row['name'];
-                $_SESSION['id'] = $row['id'];
-                header("Location: ../admin/index_admin.php");
-                exit();
-            } else if($type == 'patient' && $row['patientIC'] === $ICID && $row['password'] === $pass) {
-                $_SESSION['patientIC'] = $row['patientIC'];
-                $_SESSION['name'] = $row['name'];
-                $_SESSION['id'] = $row['id'];
-                header("Location: ../patient/index_patient.php");
-                exit();
+        // Check the ICID and password is not empty
+        if (empty($ICID) || empty($pass)) {
+            header("Location: login.php?error=Username and password are required");
+            exit();
+        } else {
+            if ($type == 'admin') {
+                $table = "admins";
+                $icIdColumn = "adminID";
             } else {
-                header("Location: index.php?error=Incorrect User IC/ID or password");
+                $table = "patients";
+                $icIdColumn = "patientIC";
+            }
+
+            $stmt = $mysqli->prepare("SELECT * FROM $table WHERE $icIdColumn = ? AND password = ?");
+            $stmt->bind_param("ss", $ICID, $pass);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+
+            // Fetch result from database and compare them
+            if ($result->num_rows === 1) {
+                $row = $result->fetch_assoc();
+
+                $_SESSION["${type}IC"] = $row[$icIdColumn];
+
+                if ($type == 'admin') {
+                    $_SESSION["name"] = $row["adminName"];
+                    $_SESSION["id"] = $row["adminID"];
+                } else {
+                    // If it's a patient table, update the column names accordingly
+                    $_SESSION["name"] = $row["patientName"];
+                    $_SESSION["id"] = $row["patientIC"];
+                }
+
+                // Check if "Remember me" is checked
+                if (isset($_POST['remember'])) {
+                    // Set a cookie to remember the user for, say, 30 days (adjust as needed)
+                    setcookie('remember_me', '1', time() + (30 * 24 * 60 * 60), '/'); // 30 days
+                }
+
+                // Different type of user leads to different index page
+                if ($type == 'admin') {
+                    header("Location: index_admin.php");
+                    exit();
+                } else {
+                    header("Location: index_patient.php");
+                    exit();
+                }
+            } else {
+                header("Location: login.php?error=Incorrect User IC/ID or password");
                 exit();
             }
-        } else {
-            header("Location: index.php?error=Incorrect User IC/ID or password");
-            exit();
         }
+    } else {
+        header("Location: login.php");
+        exit();
     }
-} else {
-    header("Location: index.php");
-    exit();
 }
 ?>
